@@ -74,11 +74,11 @@ export const Godown = (props) => {
             </div>
             {
                 items.map((item) => (
-                    <Item key={item.id} name={item.name} id={item.id} status={item.status} price={item.price} quantity={item.quantity} category={item.category}/>
+                    <Item key={item.item_id} name={item.name} id={item.item_id} status={item.status} price={item.price} quantity={item.quantity} category={item.category} onClick={props.onItemClick}/>
                 )
             )}
             {subGodowns.map((subGodown) => (
-                    <Godown key={subGodown.id} name={subGodown.name} id={subGodown.id} inty={(props.inty+100)%200}/>
+                    <Godown key={subGodown.id} name={subGodown.name} id={subGodown.id} inty={(props.inty+100)%200} onItemClick={props.onItemClick}/>
                 ))}
             {
                 items.length === 0 && subGodowns.length === 0 && opened ? <p className="ml-6"> Nothing found here...</p> : <p></p> 
