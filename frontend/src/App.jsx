@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import { Godown } from "./comps/Godown";
+import backend from "./comps/config"
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [godowns, setGodowns] = useState([]);
+
+  useEffect(() => {
+    fetch(`${backend}/root-godowns`)
+      .then((response) => response.json())
+      .then((data) => setGodowns(data))
+      .catch((error) => console.error("Error fetching godowns:", error));
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="flex flex-col items-center mt-6 bg-teal-50 h-full ">
+      <h1 className="text-xl my-5 text-teal-500 drop-shadow-xl">Godown List</h1>
+      {godowns.length > 0 ? (
+        godowns.map((godown) => (
+          <Godown key={godown.id} name={godown.name} id={godown.id} inty={0}/>
+        ))
+      ) : (
+        <p>No godowns available</p>
+      )}
+    </div>
+  );
+};
 
-export default App
+export default App;
