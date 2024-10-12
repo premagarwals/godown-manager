@@ -6,20 +6,20 @@ import { faDollarSign, faCubesStacked, faCircleExclamation, faShirt, faChair, fa
 const ItemView = (props) => {
 
   const [itemData, setItemData] = useState({
-    "item_id": "663a9d18f1894f6e874f7cedd135e248",
-    "name": "Samsung Smartphone 62",
-    "quantity": 111,
-    "category": "Electronics",
-    "price": 102.4,
-    "status": "in_stock",
-    "godown_id": "f37e12cc6bbf437aba6672628f54efa5",
-    "brand": "Samsung",
+    "item_id": null,
+    "name": "Product Name",
+    "quantity": 0,
+    "category": "Category",
+    "price": 0.00,
+    "status": "out_of_stock",
+    "godown_id": null,
+    "brand": "Brand",
     "attributes": {
-      "wattage": 56,
-      "voltage": 220,
-      "color": "AntiqueWhite"
+      "color": "NaN",
+      "size": "NaN",
+      "type": "NaN",
     },
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f62.jpg"
+    "image_url": "https://psediting.websites.co.in/obaju-turquoise/img/product-placeholder.png"
   })
 
   useEffect(() => {
@@ -48,6 +48,7 @@ const ItemView = (props) => {
 
     "wattage": "Wattage",
     "voltage": "Voltage",
+
   }
 
   return (

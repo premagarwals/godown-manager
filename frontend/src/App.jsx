@@ -1,39 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { Godown } from "./comps/Godown";
+import React, {useState, useEffect} from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from "./comps/Dashboard";
+import Auth from './comps/Auth';
+import AdminRoutes from './comps/AdminRoutes';
 import backend from "./comps/config"
-import ItemView from "./comps/ItemView";
 
 const App = () => {
-  const [godowns, setGodowns] = useState([]);
-  const [activeItem, setActiveItem] = useState("663a9d18f1894f6e874f7cedd135e248")
+  const token = window.localStorage.getItem("token");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    fetch(`${backend}/root-godowns`)
+    fetch(`${backend}/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'token': token }),
+    })
       .then((response) => response.json())
-      .then((data) => setGodowns(data))
+      .then((data) => setIsAuthenticated(data.auth))
       .catch((error) => console.error("Error fetching godowns:", error));
   }, []);
 
-  const handleItemClick = (item) => {
-    setActiveItem(item);
-  };
+  const auth = (boolean) => {
+    setIsAuthenticated(boolean);
+  }
+
+  const unAuth = () => {
+    setIsAuthenticated(false);
+    window.localStorage.removeItem("token");
+  }
 
   return (
-    <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden justify-between">
-    <ItemView item={activeItem}/>
-    <div className="flex flex-col items-center m-[2vh] mx-auto bg-teal-50 max-h-64 mb-2 md:max-h-[96vh] w-[92vw] overflow-hidden md:max-w-[40vw] lg:max-w-md px-4">
-      <h1 className="text-xl my-5 text-teal-500 drop-shadow-xl hidden md:block">Godown List</h1>
-      <div className="h-auto w-full overflow-y-scroll flex flex-col items-center shadow-inner mb-4 mt-2 rounded no-scrollbar">
-        {godowns.length > 0 ? (
-          godowns.map((godown) => (
-            <Godown key={godown.id} name={godown.name} id={godown.id} inty={0} onItemClick={handleItemClick}/>
-          ))
-        ) : (
-          <p>No godowns available</p>
-        )}
+    <Router>
+      <div>
+        <Routes>
+          <Route element={<AdminRoutes isAuthenticated={isAuthenticated}/>}>
+            <Route path="/" element={<Dashboard unAuth={unAuth}/>} />
+          </Route>
+          <Route path="/authenticate" element={<Auth verify={auth} isAuthenticated={isAuthenticated}/>} />
+        </Routes>
       </div>
-    </div>
-    </div>
+    </Router>
   );
 };
 
