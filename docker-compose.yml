@@ -16,7 +16,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     networks:
       - app-network
 
