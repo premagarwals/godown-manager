@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import backend from "./config"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign, faCubesStacked, faCircleExclamation, faShirt, faChair, faGamepad, faToolbox, faMicrochip, faCircleInfo, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign, faCubesStacked, faCircleExclamation, faShirt, faChair, faGamepad, faToolbox, faMicrochip, faCircleInfo, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ItemView = (props) => {
 
@@ -39,7 +39,7 @@ const ItemView = (props) => {
     "battery_required": "Battery Required",
 
     "type": "Type",
-    "warranty_years": "Warranty",
+    "warranty_years": "Warranty Years",
 
     "dimensions": "Dimension",
     "color": "Colour",
@@ -49,21 +49,40 @@ const ItemView = (props) => {
     "wattage": "Wattage",
     "voltage": "Voltage",
   }
+
   return (
-    <div className='h-full md:h-[96vh] mt-3 w-[95vw] mx-auto md:my-[2vh] ml-3 bg-slate-100 flex flex-col justify-between items-center p-3'>
-      <img src={itemData.image_url} alt={itemData.name} className="max-w-32 max-h-32" />
-      <h2>{itemData.name}</h2>
-      <h4>{itemData.brand}</h4>
+    <div className='h-full md:h-[96vh] mt-3 w-[92vw] mx-auto md:my-[2vh] bg-slate-100 flex flex-col justify-between items-center p-3'>
+      <div className="max-w-3/12 w-[16vh] h-[16vh] md:w-96 md:h-96 rounded-lg overflow-hidden bg-slate-200">
+          <img src={itemData.image_url} alt={`Trying to fetch <${itemData.name}> image...`} className="text-center text-zinc-400 min-w-full min-h-full" />
+        </div>
+      <div className="w-full h-auto flex flex-col items-center justify-center px-2 gap-2 m-2">
+        <div className="p-2 text-xs md:text-md flex flex-col justify-center items-center md:w-full">
+          <h2 className="text-lg text-teal-600 md:text-2xl text-center">{itemData.name}</h2>
+          <h4 className="text-sm text-zinc-600">{itemData.brand}</h4>
+        </div>
+        <ul className="w-48 md:w-full h-32 md:h-auto bg-slate-300 rounded-lg overflow-hidden text-xs md:text-md flex flex-col md:flex-row gap-1">
+          {Object.entries(itemData.attributes).map(([key, value], index) => (
+            <li key={index} className={`h-1/3 md:h-full md:w-1/3 bg-slate-200 p-2 flex md:flex-col gap-1 justify-center items-center`}>
+              <p className="text-teal-500 text-sm md:text-lg"><strong>{correct[key]} <span className="md:hidden">:</span></strong> </p> <p className="font-light text-zinc-600 md:text-base"> {String(value) === "true" ? <FontAwesomeIcon icon={faCircleCheck} /> : String(value) === "false" ? <FontAwesomeIcon incon={faCircleXmark} /> : String(value)}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="w-full m-auto rounded overflow-hidden">
         <ul className="flex w-full justify-between">
-          <li className={`w-1/3 text-center ${stockColor}`}>
-            <FontAwesomeIcon icon={faCubesStacked} />
-            <span> </span>{itemData.quantity}
+          <li className={`w-1/3 text-center ${stockColor} flex flex-col items-center justify-center p-1`}>
+            <h2 className="md:text-lg">Quantity</h2>
+            <p className="text-xs md:text-base"><FontAwesomeIcon icon={faCubesStacked} />
+            <span> </span>{itemData.quantity}</p>
           </li>
-          <li className={`w-1/3 text-center bg-amber-100 ${billColor}`}>
-            <FontAwesomeIcon icon={faDollarSign} />
-            <span> </span>{itemData.price}</li>
-          <li className="w-1/3 text-center bg-teal-200">
+          <li className={`w-1/3 text-center bg-amber-100 ${billColor} flex flex-col items-center justify-center p-1`}>
+           <h2 className="md:text-lg">Price</h2>
+           <p className="text-xs md:text-base"> <FontAwesomeIcon icon={faDollarSign} />
+            <span> </span>{itemData.price}</p>
+            </li>
+          <li className="w-1/3 text-center bg-teal-200 p-1">
+          <h2 className="text-sm md:text-lg">{String(itemData.category).toUpperCase()}</h2>
+          <p className="text-xs md:text-base">
             <FontAwesomeIcon icon={
               itemData.category === "Clothing" ? faShirt :
                 itemData.category === "Tools" ? faToolbox :
@@ -71,18 +90,11 @@ const ItemView = (props) => {
                     itemData.category === "Furniture" ? faChair :
                       itemData.category === "Electronics" ? faMicrochip :
                         faCircleInfo
-            } />
+            } /></p>
           </li>
         </ul>
       </div>
-      <ul>
-        {Object.entries(itemData.attributes).map(([key, value], index) => (
-          <li key={index}>
-            <strong>{correct[key]}:</strong> {String(value)}
-          </li>
-        ))}
-      </ul>
-      <div className={`w-1/3 text-center ${stockColor}`}>
+      <div className={`max-w-96 text-center ${stockColor} rounded mt-1 w-full`}>
         <FontAwesomeIcon icon={
           itemData.status === "in_stock" ? faCircleCheck : faCircleExclamation
         } />

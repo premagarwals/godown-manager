@@ -21,7 +21,7 @@ const App = () => {
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden justify-between">
     <ItemView item={activeItem}/>
-    <div className="flex flex-col items-center m-[2vh] bg-teal-50 max-h-96 md:max-h-[96vh] w-[95vw] overflow-hidden md:max-w-[40vw] lg:max-w-md px-4">
+    <div className="flex flex-col items-center m-[2vh] mx-auto bg-teal-50 max-h-64 mb-2 md:max-h-[96vh] w-[92vw] overflow-hidden md:max-w-[40vw] lg:max-w-md px-4">
       <h1 className="text-xl my-5 text-teal-500 drop-shadow-xl hidden md:block">Godown List</h1>
       <div className="h-auto w-full overflow-y-scroll flex flex-col items-center shadow-inner mb-4 mt-2 rounded no-scrollbar">
         {godowns.length > 0 ? (
