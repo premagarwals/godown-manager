@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom'
 import backend from "./config"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faCubesStacked, faCircleExclamation, faShirt, faChair, faGamepad, faToolbox, faMicrochip, faCircleInfo, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ItemView = (props) => {
-
   const [itemData, setItemData] = useState({
     "item_id": null,
     "name": "Product Name",
@@ -12,20 +12,31 @@ const ItemView = (props) => {
     "category": "Category",
     "price": 0.00,
     "status": "out_of_stock",
-    "godown_id": null,
+    "godown_id": "gid",
     "brand": "Brand",
     "attributes": {
       "color": "NaN",
       "size": "NaN",
-      "type": "NaN",
+      "type": "NaN"
     },
     "image_url": "https://psediting.websites.co.in/obaju-turquoise/img/product-placeholder.png"
-  })
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${backend}/item/${props.item}`)
+    const token = window.localStorage.getItem("token");
+    fetch(`${backend}/item/${props.item}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'token': token }),
+    })
       .then((response) => response.json())
-      .then((data) => setItemData(data))
+      .then((data) => {
+        if (data.auth===false) navigate('/authenticate');
+        else setItemData(data)})
       .catch((error) => console.error("Error fetching godowns:", error));
   }, [props.item]);
 

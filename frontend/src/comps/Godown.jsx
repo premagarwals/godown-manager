@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faD } from '@fortawesome/free-solid-svg-icons';
 import { Item } from "./Item";
@@ -9,6 +10,8 @@ export const Godown = (props) => {
     const [items, setItems] = useState([]);
     const [opened, setOpened] = useState(false);
     const [faDir, setFaDir] = useState(0);
+
+    const navigate = useNavigate();
 
     const getColorClasses = (inty) => {
         const colors = {
@@ -21,26 +24,42 @@ export const Godown = (props) => {
     const [color, setColor] = useState(getColorClasses(props.inty));
 
     const getSubGodowns = async () => {
+        var token = window.localStorage.getItem("token");
         try {
-            const response = await fetch(`${backend}/sub-godowns/${props.id}`);
+            const response = await fetch(`${backend}/sub-godowns/${props.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'token': token }),
+            });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            return data;
+            if (data.auth===false) navigate('/authenticate');
+            else return data;
         } catch (error) {
             console.error(error);
         }
     };
 
     const getItems = async () => {
+        var token = window.localStorage.getItem("token");
         try {
-            const response = await fetch(`${backend}/godown-items/${props.id}`);
+            const response = await fetch(`${backend}/godown-items/${props.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'token': token }),
+            });
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            return data;
+            if (data.auth===false) navigate('/authenticate');
+            else return data;
         } catch (error) {
             console.error(error);
         }
@@ -55,14 +74,14 @@ export const Godown = (props) => {
                 setItems(items);
                 setOpened(true);
             } else {
-                setSubGodowns([]); 
+                setSubGodowns([]);
                 setItems([]);
                 setOpened(false);
             }
         } catch (error) {
             console.error(error);
         }
-        setFaDir((faDir+180)%360);
+        setFaDir((faDir + 180) % 360);
         setOpened(!opened)
     };
 
@@ -70,18 +89,18 @@ export const Godown = (props) => {
         <div className={`w-11/12 p-1 ${color[0]} cursor-pointer transition-all flex flex-col  items-end rounded-lg mb-2 shadow-md`}>
             <div className={`w-full rounded-lg border-b-2 border-r-2 ${color[1]} ${color[2]} p-3 text-teal-700 flex justify-between items-center mb-4 shadow-lg hover:scale-105 transition-all`} onClick={toggleSubGodowns}>
                 <h2>{props.name}</h2>
-                <FontAwesomeIcon className="transition-all" icon={faCaretDown} rotation={faDir}/>
+                <FontAwesomeIcon className="transition-all" icon={faCaretDown} rotation={faDir} />
             </div>
             {
                 items.map((item) => (
-                    <Item key={item.item_id} name={item.name} id={item.item_id} status={item.status} price={item.price} quantity={item.quantity} category={item.category} onClick={props.onItemClick}/>
+                    <Item key={item.item_id} name={item.name} id={item.item_id} status={item.status} price={item.price} quantity={item.quantity} category={item.category} onClick={props.onItemClick} />
                 )
-            )}
+                )}
             {subGodowns.map((subGodown) => (
-                    <Godown key={subGodown.id} name={subGodown.name} id={subGodown.id} inty={(props.inty+100)%200} onItemClick={props.onItemClick}/>
-                ))}
+                <Godown key={subGodown.id} name={subGodown.name} id={subGodown.id} inty={(props.inty + 100) % 200} onItemClick={props.onItemClick} />
+            ))}
             {
-                items.length === 0 && subGodowns.length === 0 && opened ? <p className="ml-6"> Nothing found here...</p> : <p></p> 
+                items.length === 0 && subGodowns.length === 0 && opened ? <p className="ml-6"> Nothing found here...</p> : <p></p>
             }
 
         </div>

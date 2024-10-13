@@ -29,7 +29,6 @@ const Auth = (props) => {
           }
     
           const data = await response.json();
-          console.log(data);
           if (data.auth){
             window.localStorage.setItem("token",data.token);
             props.verify(data.auth);

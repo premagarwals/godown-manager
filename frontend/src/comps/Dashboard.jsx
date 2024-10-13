@@ -9,13 +9,22 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 const Dashboard = (props) => {
   const [godowns, setGodowns] = useState([]);
-  const [activeItem, setActiveItem] = useState("")
+  const [activeItem, setActiveItem] = useState()
 
   const navigate = useNavigate();
   useEffect(() => {
-    fetch(`${backend}/root-godowns`)
+    const token = window.localStorage.getItem("token");
+    fetch(`${backend}/root-godowns`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'token': token }),
+    })
       .then((response) => response.json())
-      .then((data) => setGodowns(data))
+      .then((data) => {
+        if (data.auth===false) navigate('/authenticate');
+        else setGodowns(data)})
       .catch((error) => console.error("Error fetching godowns:", error));
   }, []);
 

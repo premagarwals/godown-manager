@@ -6,10 +6,10 @@ import AdminRoutes from './comps/AdminRoutes';
 import backend from "./comps/config"
 
 const App = () => {
-  const token = window.localStorage.getItem("token");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    var token = window.localStorage.getItem("token");
     fetch(`${backend}/verify`, {
       method: 'POST',
       headers: {
