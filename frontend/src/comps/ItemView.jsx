@@ -65,8 +65,8 @@ const ItemView = (props) => {
   }
 
   return (
-    <div className='h-full md:h-[96vh] mt-3 w-[92vw] mx-auto md:my-[2vh] bg-slate-100 flex flex-col justify-between items-center p-3'>
-      <div className="max-w-3/12 w-[16vh] h-[16vh] md:w-96 md:h-96 rounded-lg overflow-hidden bg-slate-200">
+    <div className='h-[80vh] md:h-[90vh] w-[92vw] md:w-[98vw] mx-auto bg-slate-100 flex flex-col justify-between items-center p-3 rounded-lg'>
+      <div className="max-w-5/12 w-[50vw] h-[50vw] md:w-96 md:h-96 rounded-lg overflow-hidden bg-slate-200">
           <img src={itemData.image_url} alt={`Trying to fetch <${itemData.name}> image...`} className="text-center text-zinc-400 min-w-full min-h-full" />
         </div>
       <div className="w-full h-auto flex flex-col items-center justify-center px-2 gap-2 m-2">

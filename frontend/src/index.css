@@ -14,3 +14,11 @@
   -ms-overflow-style: none; 
   scrollbar-width: none;     
 }
+
+.glass {
+  background-color: rgba(153,246,228,.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-width: 0 3px 3px 0;
+  border-color: rgb(94, 234, 212,.2);
+}
