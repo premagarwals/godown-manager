@@ -1,6 +1,7 @@
 import json
 import os
 from functools import wraps
+import sqlite3
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -9,9 +10,11 @@ import datetime
 
 app = Flask(__name__)
 CORS(app)
+
 SECRET_KEY = os.getenv('JWT_KEY')
 ADMIN_ALIAS = os.getenv('ADMIN_ALIAS')
 ADMIN_PASSKEY = os.getenv('ADMIN_KEY')
+
 if not all([SECRET_KEY,ADMIN_ALIAS,ADMIN_PASSKEY]):
     raise EnvironmentError("\n\nEnvironment variables not found!\nrequired variables: ADMIN_ALIAS, ADMIN_KEY, JWT_KEY\n\nPlease run: export <variable>=<value>\n\nDon't get afraid, you can set any value you want :)\n")
 
@@ -48,38 +51,52 @@ def protected_route(func):
         return jsonify(status)
     return validator
     
-def load_godowns():
-    with open('godown.json', 'r') as file:
-        godowns = json.load(file)
-    return godowns
+def get_godown_connection():
+    conn = sqlite3.connect('godowns.db') 
+    conn.row_factory = sqlite3.Row
+    return conn
 
-def load_items():
-    with open('items.json', 'r') as file:
-        items = json.load(file)
-    return items
+def get_items_connection():
+    conn = sqlite3.connect('items.db') 
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.route('/root-godowns', methods=['POST'])
 @protected_route
 def get_root_godowns():
-    items = load_godowns()
-    filtered_items = [item for item in items if item.get('parent_godown') is None]
-    return jsonify(filtered_items)
+    conn = get_godown_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM godowns WHERE parent_godown IS NULL")
+    godowns = cursor.fetchall()
+    godown_list = [dict(godown) for godown in godowns]
+    
+    conn.close()
+    
+    return jsonify(godown_list)
 
 @app.route('/sub-godowns/<id>', methods=['POST'])
 @protected_route
 def get_sub_godowns(id):
-    items = load_godowns()
+    conn = get_godown_connection()
+    cursor = conn.cursor()
     
     if id is None:
         return jsonify({})
     
-    filtered_items = [item for item in items if item.get('parent_godown') == id]
-    return jsonify(filtered_items)
+    cursor.execute("SELECT * FROM godowns WHERE parent_godown IS ?",(id,))
+    sub_godowns = cursor.fetchall()
+    sub_godown_list = [dict(sub_godown) for sub_godown in sub_godowns]
+    
+    conn.close()
+    
+    return jsonify(sub_godown_list)
 
 @app.route('/godown-items/<id>', methods=['POST'])
 @protected_route
 def get_items(id):
-    items = load_items()
+    conn = get_items_connection()
+    cursor = conn.cursor()
     
     if id is None:
         return jsonify({})
@@ -87,12 +104,12 @@ def get_items(id):
     available_items = []
     unavailable_items = []
     
-    for item in items:
-        if item.get('godown_id') == id:
-            if item.get('status') == "in_stock":
-                available_items.append(item)
-            else:
-                unavailable_items.append(item)
+    cursor.execute("SELECT * FROM items WHERE godown_id IS ? AND status IS ?",(id,"in_stock"))
+    items = cursor.fetchall()
+    available_items = [dict(item) for item in items]
+    cursor.execute("SELECT * FROM items WHERE godown_id IS ? AND status IS ?",(id,"out_of_stock"))
+    items = cursor.fetchall()
+    unavailable_items = [dict(item) for item in items]
                 
     filtered_items = available_items + unavailable_items
     return jsonify(filtered_items)
@@ -100,17 +117,31 @@ def get_items(id):
 @app.route('/item/<id>', methods=['POST'])
 @protected_route
 def get_item_data(id):
-    items = load_items()
+    conn = get_items_connection()
+    cursor = conn.cursor()
     
     if id is None:
         return jsonify({})
     
-    for item in items:
-        if item.get('item_id') == id:
-            return jsonify(item)
+    cursor.execute("SELECT * FROM items WHERE item_id IS ?",(id,))
+    item = cursor.fetchone()
+    
+    if item:
+        item=dict(item)
+        item["attributes"]={}
+        attr_1 = item["attribute_1"].split("~")
+        item["attributes"][attr_1[0]]=attr_1[1]
+        item.pop("attribute_1")
+        attr_2 = item["attribute_2"].split("~")
+        item["attributes"][attr_2[0]]=attr_2[1]
+        item.pop("attribute_2")
+        attr_3 = item["attribute_3"].split("~")
+        item["attributes"][attr_3[0]]=attr_3[1]
+        item.pop("attribute_3")
+        return(jsonify(item))
     else:
         return jsonify({
-            "item_id": null,
+            "item_id": None,
             "name": "Product Name",
             "quantity": 0,
             "category": "Category",
