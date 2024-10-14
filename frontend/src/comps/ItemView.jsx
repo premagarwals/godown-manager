@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faCubesStacked, faCircleExclamation, faShirt, faChair, faGamepad, faToolbox, faMicrochip, faCircleInfo, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ItemView = (props) => {
-  const [itemData, setItemData] = useState({
+  const placeholderData = {
     "item_id": null,
     "name": "Product Name",
     "quantity": 0,
@@ -20,11 +20,13 @@ const ItemView = (props) => {
       "type": "NaN"
     },
     "image_url": "https://psediting.websites.co.in/obaju-turquoise/img/product-placeholder.png"
-  });
+  }
+  const [itemData, setItemData] = useState(placeholderData);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    setItemData(placeholderData);
     const token = window.localStorage.getItem("token");
     fetch(`${backend}/item/${props.item}`, {
       method: 'POST',

@@ -15,6 +15,7 @@ const Auth = (props) => {
     }
 
     const Authenticate = async () => {
+      setStatus('validating...')
         try {
           const response = await fetch(`${backend}/login`, {
             method: 'POST',
@@ -59,7 +60,7 @@ const Auth = (props) => {
                 placeholder="Enter pass key"
                 className='bg-slate-200 p-4'
             />
-            <p className='text-sm text-red-500'>{status}</p>
+            <p className={`text-sm ${status==="Invalid Alias or Passkey"? "text-red-500" : "text-blue-500"}`}>{status}</p>
             <button onClick={Authenticate} className='p-4 bg-slate-400 text-slate-100'>Unlock Godown <FontAwesomeIcon icon={faUnlock}/></button>
             
         </div>
