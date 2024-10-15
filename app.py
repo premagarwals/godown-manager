@@ -111,6 +111,8 @@ def get_items(id):
     items = cursor.fetchall()
     unavailable_items = [dict(item) for item in items]
                 
+    conn.close()
+    
     filtered_items = available_items + unavailable_items
     return jsonify(filtered_items)
 
@@ -125,9 +127,29 @@ def get_item_data(id):
     
     cursor.execute("SELECT * FROM items WHERE item_id IS ?",(id,))
     item = cursor.fetchone()
+    item = dict(item)
     
+    conn.close()
+    conn = get_godown_connection()
+    cursor = conn.cursor()
+    
+    location = list([])
+    cursor.execute("SELECT * FROM godowns WHERE id IS ?",(item["godown_id"],))
+    godown = cursor.fetchone()
+    godown = dict(godown)
+    location.append(godown["name"])
+    
+    while godown["parent_godown"]:
+        cursor.execute("SELECT * FROM godowns WHERE id IS ?",(godown["parent_godown"],))
+        godown = cursor.fetchone()
+        godown = dict(godown)
+        location.append(godown["name"])
+    
+    location.reverse()
+    location = '/'.join(location)
+    
+    conn.close()
     if item:
-        item=dict(item)
         item["attributes"]={}
         attr_1 = item["attribute_1"].split("~")
         item["attributes"][attr_1[0]]=attr_1[1]
@@ -138,6 +160,7 @@ def get_item_data(id):
         attr_3 = item["attribute_3"].split("~")
         item["attributes"][attr_3[0]]=attr_3[1]
         item.pop("attribute_3")
+        item["location"] = location
         return(jsonify(item))
     else:
         return jsonify({
@@ -156,6 +179,20 @@ def get_item_data(id):
             },
             "image_url": "https://psediting.websites.co.in/obaju-turquoise/img/product-placeholder.png"
         })
+        
+@app.route('/search/<param>', methods=['POST'])
+@protected_route
+def search(param):
+    conn = get_items_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM items WHERE name LIKE ?",('%'+str(param)+'%',))
+    items = cursor.fetchall()
+    items = [dict(item) for item in items]
+    
+    conn.close()
+    
+    return jsonify(items)
 
 @app.route('/login', methods=['POST'])
 def login():

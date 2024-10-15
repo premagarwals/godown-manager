@@ -14,6 +14,7 @@ const ItemView = (props) => {
     "status": "out_of_stock",
     "godown_id": "gid",
     "brand": "Brand",
+    "location":"Nan",
     "attributes": {
       "color": "NaN",
       "size": "NaN",
@@ -65,7 +66,7 @@ const ItemView = (props) => {
   }
 
   return (
-    <div className='h-[80vh] md:h-[90vh] w-[92vw] md:w-[98vw] mx-auto bg-slate-100 flex flex-col justify-between items-center p-3 rounded-lg'>
+    <div className='h-[80vh] md:h-[90vh] w-[92vw] md:w-[98vw] mx-auto bg-slate-100 flex flex-col justify-between items-center p-3 rounded-lg text-center'>
       <div className="max-w-5/12 w-[50vw] h-[50vw] md:w-96 md:h-96 rounded-lg overflow-hidden bg-slate-200">
           <img src={itemData.image_url} alt={`Trying to fetch <${itemData.name}> image...`} className="text-center text-zinc-400 min-w-full min-h-full" />
         </div>
@@ -114,6 +115,7 @@ const ItemView = (props) => {
         } />
         <span> </span>{itemData.status === "in_stock" ? "Available" : "Out of Stock"}
       </div>
+      <h3 className="text-xs mt-4 text-zinc-400">{itemData.location}</h3>
     </div>
 
   )

@@ -2,8 +2,6 @@ import React, {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Godown } from './Godown'
 import backend from "./config"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faLock } from "@fortawesome/free-solid-svg-icons"
 
 const GodownList = (props) => {
     const [godowns, setGodowns] = useState([]);
