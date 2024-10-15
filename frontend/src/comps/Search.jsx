@@ -42,9 +42,9 @@ const Search = (props) => {
     }, [searchParam]);
     return (
         <div className={`w-5/6 md:w-[500px] glass shadow-xl z-5 h-4/6 rounded-lg fixed flex flex-col gap-3 p-3 ${props.isOpen ? "top-32" : "-top-full"} left-2/4 -translate-x-2/4 z-10 transition-all duration-500`}>
-            <div className='h-[10%] bg-teal-50 w-full rounded-md flex'>
+            <div className='h-[10%] bg-red-50 w-full rounded-md flex'>
                 <input type="text" name="" id="" className='w-5/6 rounded-md p-3 outline-none text-teal-500' placeholder="Item name..." value={searchParam} onChange={(e) => setSearchParam(e.target.value)} />
-                <FontAwesomeIcon icon={faEraser} className="text-red-400 w-1/6 my-auto bg-red-100 py-3 mx-1 rounded" onClick={() => { setItems([]); setSearchParam("") }} />
+                <FontAwesomeIcon icon={faEraser} className="text-red-400 w-1/6 my-auto" onClick={() => { setItems([]); setSearchParam("") }} />
             </div>
             <div className="h-auto w-full p-5 overflow-y-scroll overflow-x-visible flex flex-col items-center shadow-inner mb-4 mt-2 rounded no-scrollbar">
                 {
