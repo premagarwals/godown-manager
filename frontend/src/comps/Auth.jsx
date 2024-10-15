@@ -51,14 +51,14 @@ const Auth = (props) => {
                 value={alias}
                 onChange={(e) => setAlias(e.target.value)}
                 placeholder="Enter admin alias"
-                className='bg-slate-200 p-4'
+                className='bg-slate-200 p-4 outline-none'
             />
             <input
                 type="password"
                 value={passKey}
                 onChange={(e) => setPassKey(e.target.value)}
                 placeholder="Enter pass key"
-                className='bg-slate-200 p-4'
+                className='bg-slate-200 p-4 outline-none'
             />
             <p className={`text-sm ${status==="Invalid Alias or Passkey"? "text-red-500" : "text-blue-500"}`}>{status}</p>
             <button onClick={Authenticate} className='p-4 bg-slate-400 text-slate-100'>Unlock Godown <FontAwesomeIcon icon={faUnlock}/></button>
