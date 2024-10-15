@@ -1,14 +1,36 @@
 # Godown Manager
 
-Godown Manager is a containerized application built with Vite (React + Tailwind) to monitor the real-time status of godowns (warehouses). Authentication is secured by an admin alias and passkey, and adds the layer of security with JSON Web Token (JWT) for secure access. It is able to provide realtime data by fetching only the required data at a particular instant.
+Godown Manager is a containerized application built with Vite (React + Tailwind) to monitor the real-time status of godowns (warehouses). An admin alias and a passkey secure authentication with JSON Web Token (JWT).
+
+Visit [https://godown-manager.vercel.app](https://godown-manager.vercel.app). The required credentials are -
+`Admin alias`: admin
+`Pass key`: 12345678
 
 ## Table of Contents
+- [Approach](#approach)
 - [Prerequisites](#prerequisites)
 - [Environment Variables](#environment-variables)
 - [Installation](#installation)
 - [Running the App](#running-the-app)
 - [Authentication](#authentication)
 - [Notes](#notes)
+
+## Approach
+
+- At first, I just made a basic API service using flask. Then tried to fetch and show only the parent godowns.
+- Used Vite to setup React. Used TailwindCSS and Fontawesome.
+- Updated the API and frontend till it was able to fetch and show the Subgodowns and Items in each Godown.
+- Added a Main section to show the selected item's data.
+- Added loading animations and verbose for better UX.
+- Added JWT authentication. Protected the routes in frontend. Added authentication to API calls also.
+- Made SQLite database from the JSON files. Replaced JSON-based database with SQLite.
+- Added Navigation Bar at top.
+- Made the Godown List to be able to dissapear when not required (added button in NavBar).
+- Added search feature in frontend and search API endpoint in backend.
+- Added Dockefiles and docker-compose.
+- Deployed backend and frontend on Vercel.
+
+Now for installation on a local machine, go through the following...
 
 ## Prerequisites
 Make sure you have the following installed:
@@ -19,7 +41,7 @@ Make sure you have the following installed:
 Before starting the app, you can modify the environment variables in the `.env` file. These variables control the application's configuration.
 
 ```
-#These credentials will be required to unlock the godown app 
+#These credentials will be required to unlock the Godown app 
 ADMIN_ALIAS=admin
 ADMIN_PASSKEY=12345
 JWT_SECRET="MahSupaSecretKey#6699"
@@ -65,7 +87,7 @@ As a part of that login, a JWT token will be generated which could be used each 
 **Notes:**
 
 - Since this application is containerized, Docker is required to be running before bringing up services.
-- The default environment variables are also not very secure. Change them in the `.env` file prior to deploying the application.
+- The default environment variables are also not very secure. Change them in the `.env` file before deploying the application.
 - To stop the application, either use `Ctrl+C` in the terminal or run:
   ```bash
   docker-compose down
